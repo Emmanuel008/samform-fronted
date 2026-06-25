@@ -2,26 +2,26 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { adminLogin, saveAdminSession } from '../../api/adminLogin';
 import SiteHeader from '../../components/SiteHeader/SiteHeader';
+import { getAdminDisplayName, showErrorAlert, showLoginSuccessAlert } from '../../utils/sweetAlert';
 import './AdminLogin.css';
 
 function AdminLogin() {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setError('');
     setIsSubmitting(true);
 
     try {
       const response = await adminLogin(username.trim(), password);
       saveAdminSession(response);
+      await showLoginSuccessAlert(getAdminDisplayName(response, username.trim()));
       navigate('/admin/dashboard', { replace: true });
     } catch (loginError) {
-      setError(loginError.message);
+      await showErrorAlert('Sign in failed', loginError.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -64,12 +64,6 @@ function AdminLogin() {
                 required
               />
             </div>
-
-            {error && (
-              <p className="admin-login__error" role="alert">
-                {error}
-              </p>
-            )}
 
             <button type="submit" className="admin-login__submit" disabled={isSubmitting}>
               {isSubmitting ? 'Signing in...' : 'Sign In'}

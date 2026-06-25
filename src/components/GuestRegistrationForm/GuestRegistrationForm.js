@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { submitRegistration } from '../../api/submitRegistration';
+import { showErrorAlert, showRegistrationSuccessAlert } from '../../utils/sweetAlert';
 import Stepper from '../Stepper/Stepper';
 import CountrySelect from '../CountrySelect/CountrySelect';
 import PhoneInput from '../PhoneInput/PhoneInput';
@@ -50,7 +51,6 @@ const INITIAL_FORM_DATA = {
 function GuestRegistrationForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
-  const [submitted, setSubmitted] = useState(false);
   const [idAttachment, setIdAttachment] = useState(null);
   const [idAttachmentPreview, setIdAttachmentPreview] = useState('');
   const [idAttachmentError, setIdAttachmentError] = useState('');
@@ -128,15 +128,20 @@ function GuestRegistrationForm() {
 
     try {
       await submitRegistration(formData, idAttachment);
-      setSubmitted(true);
+      await showRegistrationSuccessAlert();
+      handleReset();
     } catch (error) {
-      setSubmitError(error.message);
+      await showErrorAlert('Submission failed', error.message);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleReset = () => {
+    if (idAttachmentPreview) {
+      URL.revokeObjectURL(idAttachmentPreview);
+    }
+
     setFormData(INITIAL_FORM_DATA);
     setIdAttachment(null);
     setIdAttachmentPreview('');
@@ -144,25 +149,7 @@ function GuestRegistrationForm() {
     setSignatureError('');
     setSubmitError('');
     setCurrentStep(1);
-    setSubmitted(false);
   };
-
-  if (submitted) {
-    return (
-      <div className="guest-form-page">
-        <SiteHeader />
-        <div className="guest-form">
-          <div className="guest-form__success">
-            <h2>Registration Submitted</h2>
-            <p>Thank you for completing the Marambo Residence guest registration form.</p>
-            <button type="button" className="btn btn--primary" onClick={handleReset}>
-              Register Another Guest
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="guest-form-page">

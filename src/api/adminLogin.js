@@ -35,7 +35,15 @@ export function clearAdminSession() {
 
 export function getAdminKey() {
   const session = getAdminSession();
-  return session?.adminKey || session?.token || session?.key || '';
+  return (
+    session?.adminKey ||
+    session?.admin_key ||
+    session?.apiKey ||
+    session?.api_key ||
+    session?.token ||
+    session?.key ||
+    ''
+  );
 }
 
 export async function adminLogin(username, password) {

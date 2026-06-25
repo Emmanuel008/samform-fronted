@@ -1,7 +1,7 @@
 /**
  * API base URL for all backend requests.
  *
- * Local dev default: http://sam.jitihada.co.tz
+ * Local dev default: https://sam.jitihada.co.tz
  *
  * Production hosting notes:
  * - If your site is HTTPS (Netlify, Vercel, etc.) and the API is HTTP only,
@@ -13,7 +13,7 @@
  *      REACT_APP_API_BASE=
  *      (empty = same-origin paths like /submit.php)
  */
-const DEFAULT_API_BASE = 'http://sam.jitihada.co.tz';
+const DEFAULT_API_BASE = 'https://sam.jitihada.co.tz';
 
 function resolveApiBase() {
   if (process.env.REACT_APP_API_BASE !== undefined) {
@@ -28,6 +28,20 @@ export const API_BASE = resolveApiBase();
 export function apiUrl(path) {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
   return API_BASE ? `${API_BASE}${normalizedPath}` : normalizedPath;
+}
+
+export function resolveAssetUrl(path) {
+  if (!path || typeof path !== 'string') {
+    return '';
+  }
+
+  const trimmed = path.trim();
+
+  if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith('data:')) {
+    return trimmed;
+  }
+
+  return apiUrl(trimmed.startsWith('/') ? trimmed : `/${trimmed}`);
 }
 
 export function isLikelyNetworkBlockedError(error) {
