@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { API_BASE } from './config';
+import { apiUrl, formatNetworkError } from './config';
 import { getAdminKey } from './adminLogin';
 
-const REGISTRATIONS_URL = `${API_BASE}/admin_registrations.php`;
-const UPDATE_URL = `${API_BASE}/admin_update.php`;
-const DELETE_URL = `${API_BASE}/admin_delete.php`;
+const REGISTRATIONS_URL = apiUrl('/admin_registrations.php');
+const UPDATE_URL = apiUrl('/admin_update.php');
+const DELETE_URL = apiUrl('/admin_delete.php');
 
 function getAuthHeaders() {
   const adminKey = getAdminKey();
@@ -19,7 +19,7 @@ function getAuthHeaders() {
 }
 
 function parseApiError(error, fallback) {
-  return error.response?.data?.message || error.message || fallback;
+  return formatNetworkError(error, fallback);
 }
 
 export function parseRegistrationsList(data) {

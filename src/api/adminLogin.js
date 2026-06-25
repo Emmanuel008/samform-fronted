@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { API_BASE } from './config';
+import { apiUrl, formatNetworkError } from './config';
 
-export const ADMIN_LOGIN_URL = `${API_BASE}/admin_login.php`;
+export const ADMIN_LOGIN_URL = apiUrl('/admin_login.php');
 export const ADMIN_SESSION_KEY = 'maramboAdminSession';
 
 export function buildAdminLoginPayload(username, password) {
@@ -49,11 +49,6 @@ export async function adminLogin(username, password) {
 
     return response.data;
   } catch (error) {
-    const message =
-      error.response?.data?.message ||
-      error.message ||
-      'Unable to sign in. Please try again.';
-
-    throw new Error(message);
+    throw new Error(formatNetworkError(error, 'Unable to sign in. Please try again.'));
   }
 }

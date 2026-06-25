@@ -1,8 +1,8 @@
 import axios from 'axios';
 import COUNTRIES from '../data/countries';
-import { API_BASE } from './config';
+import { apiUrl, formatNetworkError } from './config';
 
-export const SUBMIT_URL = `${API_BASE}/submit.php`;
+export const SUBMIT_URL = apiUrl('/submit.php');
 
 export function getDialCode(countryCode) {
   return COUNTRIES.find((country) => country.code === countryCode)?.dialCode || '';
@@ -79,11 +79,6 @@ export async function submitRegistration(formData, idAttachment) {
 
     return response.data;
   } catch (error) {
-    const message =
-      error.response?.data?.message ||
-      error.message ||
-      'Failed to submit registration. Please try again.';
-
-    throw new Error(message);
+    throw new Error(formatNetworkError(error, 'Failed to submit registration. Please try again.'));
   }
 }
