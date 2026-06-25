@@ -1,24 +1,17 @@
-import logo from './logo.svg';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import GuestRegistrationForm from './components/GuestRegistrationForm/GuestRegistrationForm';
+import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
+import AdminLogin from './pages/AdminLogin/AdminLogin';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route path="/" element={<GuestRegistrationForm />} />
+      <Route path="/admin" element={<AdminLogin />} />
+      <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 
