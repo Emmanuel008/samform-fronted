@@ -9,7 +9,34 @@
   padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 1rem;
+}
+
+.site-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.site-header__login {
+  flex-shrink: 0;
+  padding: 0.5625rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #0d0d0d;
+  text-decoration: none;
+  background: #c9a962;
+  border: 1px solid #c9a962;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.site-header__login:hover {
+  color: #fff;
+  background: transparent;
 }
 
 .site-header__logo-wrap {
@@ -52,6 +79,11 @@
 @media (max-width: 480px) {
   .site-header__inner {
     padding: 0.875rem 1rem;
+  }
+
+  .site-header__login {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
   }
 
   .site-header__title {
