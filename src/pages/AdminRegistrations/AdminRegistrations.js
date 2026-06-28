@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   deleteRegistration,
   fetchRegistration,
@@ -28,6 +28,7 @@ import {
   IconUser,
 } from '../../components/AdminIcons/AdminIcons';
 import '../AdminDashboard/AdminDashboard.css';
+import './AdminRegistrations.css';
 
 const EMPTY_FORM = registrationToFormState({});
 const PAGE_SIZE = 10;
@@ -45,6 +46,7 @@ function AdminRegistrations() {
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [activeRegistrationId, setActiveRegistrationId] = useState('');
+  const listTopRef = useRef(null);
 
   const loadRegistrations = useCallback(async (query = '') => {
     setIsLoading(true);
@@ -60,6 +62,16 @@ function AdminRegistrations() {
       setIsLoading(false);
     }
   }, []);
+
+  const scrollToListTop = () => {
+    const main = document.querySelector('.admin-main');
+    if (main) {
+      main.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    listTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -86,6 +98,16 @@ function AdminRegistrations() {
   const paginatedRegistrations = registrations.slice(pageStartIndex, pageStartIndex + PAGE_SIZE);
   const showingFrom = registrations.length === 0 ? 0 : pageStartIndex + 1;
   const showingTo = Math.min(pageStartIndex + PAGE_SIZE, registrations.length);
+
+  const changePage = (page) => {
+    const nextPage = Math.min(Math.max(1, page), totalPages);
+    if (nextPage === safePage) {
+      return;
+    }
+
+    setCurrentPage(nextPage);
+    requestAnimationFrame(scrollToListTop);
+  };
 
   const openRegistration = async (id) => {
     setPanelError('');
@@ -170,7 +192,7 @@ function AdminRegistrations() {
   };
 
   return (
-    <div className="admin-dashboard">
+    <div className="admin-dashboard admin-registrations" ref={listTopRef}>
       <div className="admin-dashboard__topbar">
         <div>
           <h1 className="admin-dashboard__title">Registrations</h1>
@@ -263,7 +285,7 @@ function AdminRegistrations() {
                   <button
                     type="button"
                     className="admin-pagination__btn"
-                    onClick={() => setCurrentPage((page) => page - 1)}
+                    onClick={() => changePage(safePage - 1)}
                     disabled={safePage === 1}
                   >
                     Previous
@@ -280,7 +302,7 @@ function AdminRegistrations() {
                         ]
                           .filter(Boolean)
                           .join(' ')}
-                        onClick={() => setCurrentPage(page)}
+                        onClick={() => changePage(page)}
                         aria-current={page === safePage ? 'page' : undefined}
                       >
                         {page}
@@ -291,7 +313,7 @@ function AdminRegistrations() {
                   <button
                     type="button"
                     className="admin-pagination__btn"
-                    onClick={() => setCurrentPage((page) => page + 1)}
+                    onClick={() => changePage(safePage + 1)}
                     disabled={safePage === totalPages}
                   >
                     Next
